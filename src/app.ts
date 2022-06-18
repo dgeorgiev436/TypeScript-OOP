@@ -1,120 +1,53 @@
-// Deparmtnet class template
-abstract class Department {
-  //   Private key word makes methods and properties only accesible within the child object
-  //   readonly keyword for properties that should never change
-  //   Protected key word allows the property to be accessible from any class that extends the parent class
-  //   Static key word allows us to use methods and properties without initializing a child class
-  //   Abstract allows us to override parent class methods from child classes
-  protected employees: string[] = [];
-  static fiscalYear = 2022;
-
-  constructor(protected readonly id: string, private name: string) {}
-
-  //   The this keyword refers to an instance of the Department class
-  abstract describe(this: Department): void;
-
-  static createEmployee(name: string) {
-    return { name: name };
-  }
-
-  addEmployee(employee: string) {
-    this.employees.push(employee);
-  }
-
-  printEmployeeInformation() {
-    console.log(this.employees.length);
-    console.log(this.name);
-    console.log(this.employees);
-  }
+// Setting interface for functions
+interface AddNumber{
+	(a: number, b: number): number;
 }
 
-// ITDepartment class
-class ITDepartment extends Department {
-  admins: string[];
-  constructor(id: string, admins: string[]) {
-    // Super is used when we extend from a parent class
-    // Calls the constructor of the parent class inside the child class
-    super(id, "IT");
+let add: AddNumber
 
-    this.admins = admins;
-  }
-
-  describe() {
-    console.log("IT Department - ID :" + this.id);
-  }
+add = (n1: number, n2: number) => {
+	return n1 + n2;
 }
 
-// AccountingDepartment class
-class AccountingDepartment extends Department {
-  private lastReport: string;
-  private static instance: AccountingDepartment;
-
-  get mostRecetReport() {
-    if (this.lastReport) {
-      return this.lastReport;
-    }
-    throw new Error("No report found");
-  }
-
-  set mostRecentReport(value: string) {
-    if (!value) {
-      throw new Error("Please enter a valid value!");
-    }
-    this.addReport(value);
-  }
-
-  private constructor(id: string, private reports: string[]) {
-    super(id, "Accounting");
-    this.lastReport = reports[0];
-  }
-
-  static getInstance(){
-    if(this.instance){
-        return this.instance;
-    }
-
-    this.instance = new AccountingDepartment("d3", []);
-    return this.instance
-  }
-
-  addEmployee(name: string) {
-    if (name === "Max") {
-      return;
-    }
-    this.employees.push(name);
-  }
-
-  addReport(report: string) {
-    this.reports.push(report);
-    this.lastReport = report;
-  }
-
-  printReports() {
-    console.log(this.reports);
-  }
-
-  describe() {
-    console.log("Accounting Department - ID :" + this.id);
-  }
+// Creating Person interface.
+// It allows to define the structure of objects. 
+// Used as a type to type check object that must have the same structure.
+interface Named {
+	readonly name?: string;
+	outputName?: string;
 }
 
-const employee1 = Department.createEmployee("Petkan");
-console.log(employee1);
-console.log("The Fiscal year is : " + Department.fiscalYear);
 
-// Instancce of ITDepartment class
-const it = new ITDepartment("d1", ["Max"]);
+// Greetable interface inherits from Named interface
+interface Greetable extends Named {
+	greet(phrase: string): void;
+}
 
-it.addEmployee("Max");
-it.addEmployee("Phil");
-it.describe();
-it.printEmployeeInformation();
+class Person implements Greetable {
+	name?: string;
+	age = 30;
+	
+	
+	constructor(n?: string) {
+		if(n){
+			this.name = n;	
+		}
+	}
+	
+	greet(phrase: string){
+		if(this.name){
+			console.log(phrase + " " + this.name)	
+		}else{
+			console.log("No name provided")
+		}
+	}
+}
 
+let user1: Greetable;
 
-// Instance of Accounting Department class
-// const accounting = new AccountingDepartment("a1", []);
-const accounting = AccountingDepartment.getInstance();
-console.log(accounting)
+user1 = new Person();
+	
+	
+user1.greet("HI There i am Max");
 
-accounting.describe();
-
+console.log(user1);
